@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rollncode.clicker.com.rollncode.clicker.screen.MainActivity">
+    
+    <include layout="@layout/toolbar"/>
+    
+    <android.support.constraint.Guideline
+        android:id="@+id/glTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25"/>
+    
+    <android.support.constraint.Guideline
+        android:id="@+id/glBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75"/>
+    
+    <Button
+        android:id="@+id/btnRecord"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/spacing"
+        android:layout_marginEnd="@dimen/spacing_x2"
+        android:layout_marginStart="@dimen/spacing_x2"
+        android:layout_marginTop="@dimen/spacing"
+        android:text="@string/click"
+        app:layout_constraintBottom_toBottomOf="@+id/glBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/glTop"/>
+    
+    <Button
+        android:id="@+id/btnRemoveRecord"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing"
+        android:text="@string/remove_record"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnRecord"
+        app:layout_constraintStart_toStartOf="@+id/btnRecord"/>
+
+</android.support.constraint.ConstraintLayout>

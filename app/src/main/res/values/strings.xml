@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Clicker</string>
+    
+    <string name="click">Click</string>
+    <string name="remove_record">Remove previous record</string>
+    
+    <string name="share">Share</string>
+    <string name="list">List</string>
+    
+</resources>
