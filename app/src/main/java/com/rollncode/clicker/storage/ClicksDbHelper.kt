@@ -1,4 +1,4 @@
-package storage
+package com.rollncode.clicker.storage
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -15,19 +15,18 @@ class ClicksDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val DATABASE_NAME = "clicks.db"
         const val DATABASE_VERSION = 1
         const val TABLE_NAME = "clicks"
+        const val TIMESTAMP_COLUMN_NAME = "timestamp"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL("CREATE TABLE $TABLE_NAME (" +
                 "id_ INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "timestamp INTEGER)")
+                "$TIMESTAMP_COLUMN_NAME INTEGER)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE $TABLE_NAME")
     }
 
-    fun insertTime(timestamp: Long) {
-
-    }
+    
 }

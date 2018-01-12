@@ -7,4 +7,6 @@
     <string name="share">Share</string>
     <string name="list">List</string>
     
+    <string name="format_s_today_clicks">Clicks for today:\n%1$d</string>
+    
 </resources>

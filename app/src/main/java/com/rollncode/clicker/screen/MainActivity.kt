@@ -5,16 +5,22 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import com.rollncode.clicker.R
+import com.rollncode.clicker.storage.ClicksDbManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : BaseActivity(), View.OnClickListener {
+
+    private var clicksCounter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(myToolbar)
+
+        clicksCounter = ClicksDbManager.getTodayClicks()
+        updateClickBtnText()
 
         btnRecord.setOnClickListener(this)
         btnRemoveRecord.setOnClickListener(this)
@@ -32,9 +38,22 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.btnRecord -> {
+                clicksCounter++
+                ClicksDbManager.insertRecord(System.currentTimeMillis())
             }
+
             R.id.btnRemoveRecord -> {
+                if (clicksCounter > 0) {
+                    clicksCounter--
+                }
+                ClicksDbManager.removePreviousRecord()
             }
         }
+        updateClickBtnText()
+    }
+
+
+    private fun updateClickBtnText() {
+        btnRecord.text = resources.getString(R.string.format_s_today_clicks, clicksCounter)
     }
 }

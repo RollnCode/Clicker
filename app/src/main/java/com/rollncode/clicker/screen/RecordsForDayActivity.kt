@@ -1,7 +1,11 @@
 package com.rollncode.clicker.screen
 
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import com.rollncode.clicker.R
+import com.rollncode.clicker.adapters.DaysListAdapter
+import com.rollncode.clicker.storage.ClicksDbManager
+import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**
@@ -16,9 +20,10 @@ class RecordsForDayActivity : BaseActivity() {
         setContentView(R.layout.activity_list)
 
         setSupportActionBar(myToolbar)
+
+        rvList.layoutManager = LinearLayoutManager(this)
+        rvList.adapter = DaysListAdapter(ClicksDbManager.getClicksByDate())
     }
 
     override fun hasBackButton() = true
-
-
 }
