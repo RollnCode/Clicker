@@ -13,8 +13,8 @@ import com.rollncode.clicker.extensions.convertToDateString
  */
 object ClicksDbManager {
 
-    private const val DATE_COLUMN_ALIAS = "date"
-    private const val NUMBER_COLUMN_ALIAS = "number"
+    const val DATE_COLUMN_ALIAS = "date"
+    const val NUMBER_COLUMN_ALIAS = "number"
 
     private lateinit var dataBase: SQLiteDatabase
     private val contentValues by lazy { ContentValues() }
@@ -41,13 +41,13 @@ object ClicksDbManager {
 
     fun removePreviousRecord() = dataBase.delete(ClicksDbHelper.TABLE_NAME, "id_ = (SELECT MAX(id_) FROM ${ClicksDbHelper.TABLE_NAME})", null)
 
-    fun getClicksByDate(): MutableList<Pair<String, Int>> {
-        val cursor = dataBase.rawQuery("SELECT strftime('%Y-%m-%d',${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') as $DATE_COLUMN_ALIAS, COUNT(*) as $NUMBER_COLUMN_ALIAS " +
+    fun getClicksByDate(): Cursor/*MutableList<Pair<String, Int>>*/ {
+        /*val cursor =*/return dataBase.rawQuery("SELECT strftime('%Y-%m-%d',${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') as $DATE_COLUMN_ALIAS, COUNT(*) as $NUMBER_COLUMN_ALIAS " +
                 "FROM ${ClicksDbHelper.TABLE_NAME} " +
                 "GROUP BY date(${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') " +
                 "ORDER BY timestamp DESC", null)
 
-        val dates = mutableListOf<Pair<String, Int>>()
+        /*val dates = mutableListOf<Pair<String, Int>>()
 
         if (cursor.count > 0) {
             cursor.moveToPosition(0)
@@ -61,7 +61,7 @@ object ClicksDbManager {
             }
         }
         cursor.close()
-        return dates
+        return dates*/
     }
 
     fun getTodayClicks(): Int {
@@ -69,7 +69,7 @@ object ClicksDbManager {
         try {
             cursor = dataBase.rawQuery("SELECT COUNT(*) as $NUMBER_COLUMN_ALIAS " +
                     "FROM ${ClicksDbHelper.TABLE_NAME} " +
-                    "WHERE date(${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') LIKE ? " ,
+                    "WHERE date(${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') LIKE ? ",
                     arrayOf(System.currentTimeMillis().convertToDateString()))
 
             return if (cursor.count > 0) {
