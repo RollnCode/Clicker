@@ -1,10 +1,12 @@
 package com.rollncode.clicker.screen
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import com.rollncode.clicker.R
+import com.rollncode.clicker.provider.ClicksContract
 import com.rollncode.clicker.storage.ClicksDbManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -39,7 +41,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         when (view?.id) {
             R.id.btnRecord -> {
                 clicksCounter++
-                ClicksDbManager.insertRecord(System.currentTimeMillis())
+                val values = ContentValues()
+                values.put(ClicksContract.Clicks.TIMESTAMP_COLUMN_NAME, System.currentTimeMillis())
+                contentResolver.insert(ClicksContract.Clicks.CONTENT_URI, values)
             }
 
             R.id.btnRemoveRecord -> {

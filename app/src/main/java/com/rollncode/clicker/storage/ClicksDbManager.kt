@@ -41,27 +41,21 @@ object ClicksDbManager {
 
     fun removePreviousRecord() = dataBase.delete(ClicksDbHelper.TABLE_NAME, "id_ = (SELECT MAX(id_) FROM ${ClicksDbHelper.TABLE_NAME})", null)
 
-    fun getClicksByDate(): Cursor/*MutableList<Pair<String, Int>>*/ {
-        /*val cursor =*/return dataBase.rawQuery("SELECT strftime('%Y-%m-%d',${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') as $DATE_COLUMN_ALIAS, COUNT(*) as $NUMBER_COLUMN_ALIAS " +
-                "FROM ${ClicksDbHelper.TABLE_NAME} " +
-                "GROUP BY date(${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') " +
-                "ORDER BY timestamp DESC", null)
+    fun getClicksByDates(): Cursor {
+        val projection = arrayOf("strftime('%Y-%m-%d',${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') as $DATE_COLUMN_ALIAS", "COUNT(*) as $NUMBER_COLUMN_ALIAS")
+        val groupBy = "date(${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') "
+        val sortOrder = "timestamp DESC"
 
-        /*val dates = mutableListOf<Pair<String, Int>>()
+        return dataBase.query(ClicksDbHelper.TABLE_NAME, projection, null, null, groupBy, null, sortOrder)
+    }
 
-        if (cursor.count > 0) {
-            cursor.moveToPosition(0)
-            dates.add(Pair(cursor.getString(cursor.getColumnIndex(DATE_COLUMN_ALIAS)), cursor.getInt(cursor.getColumnIndex(NUMBER_COLUMN_ALIAS))))
+    fun getClicksBySingleDate(date: String): Cursor {
+        val projection = arrayOf(ClicksDbHelper.TIMESTAMP_COLUMN_NAME)
+        val selection = "date(${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') LIKE ? "
+        val selectionArgs = arrayOf(date)
+        val sortOrder = "timestamp DESC"
 
-            if (cursor.moveToFirst()) {
-                do {
-                    dates.add(Pair(cursor.getString(cursor.getColumnIndex(DATE_COLUMN_ALIAS)), cursor.getInt(cursor.getColumnIndex(NUMBER_COLUMN_ALIAS))))
-
-                } while (cursor.moveToNext())
-            }
-        }
-        cursor.close()
-        return dates*/
+        return dataBase.query(ClicksDbHelper.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder)
     }
 
     fun getTodayClicks(): Int {

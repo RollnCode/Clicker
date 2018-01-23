@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import com.rollncode.clicker.R
 import com.rollncode.clicker.adapters.DaysListAdapter
 import com.rollncode.clicker.loaders.ClicksByDateLoader
+import com.rollncode.clicker.provider.ClicksContract
+import com.rollncode.clicker.storage.ClicksDbHelper
 import com.rollncode.clicker.storage.ClicksDbManager
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -32,7 +35,13 @@ class RecordsForDayActivity : BaseActivity(), LoaderManager.LoaderCallbacks<Curs
     override fun hasBackButton() = true
 
     override fun onLoadFinished(loader: Loader<Cursor>?, data: Cursor?) {
-        rvList.adapter = DaysListAdapter(ClicksDbManager.getClicksByDate())
+        val projection = arrayOf("strftime('%Y-%m-%d',${ClicksDbHelper.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch') as ${ClicksDbManager.DATE_COLUMN_ALIAS}", "COUNT(*) as ${ClicksDbManager.NUMBER_COLUMN_ALIAS}")
+        val cursor = contentResolver.query(ClicksContract.Clicks.CONTENT_URI, projection, null, null, null)
+
+        cursor.moveToPosition(0)
+        Log.d("logtag","${cursor.getString(cursor.getColumnIndex(ClicksDbManager.DATE_COLUMN_ALIAS))}  ${cursor.getInt(cursor.getColumnIndex(ClicksDbManager.NUMBER_COLUMN_ALIAS))}")
+
+        rvList.adapter = DaysListAdapter(cursor/*ClicksDbManager.getClicksByDates()*/)
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?) = ClicksByDateLoader(this)

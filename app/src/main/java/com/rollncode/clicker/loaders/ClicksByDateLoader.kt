@@ -9,5 +9,5 @@ import com.rollncode.clicker.storage.ClicksDbManager
  * @since 2018.01.15
  */
 class ClicksByDateLoader(context: Context) : BaseLoader(context) {
-    override fun loadInBackground() = ClicksDbManager.getClicksByDate()
+    override fun loadInBackground() = ClicksDbManager.getClicksByDates()
 }

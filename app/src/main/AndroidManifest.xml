@@ -11,6 +11,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".application.MyApplication">
+        
+        <provider
+            android:authorities="com.rollncode.clicker.provider.ClicksProvider"
+            android:name=".provider.ClicksProvider"
+            android:label="clicksProvider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:readPermission="com.rollncode.clicker.provider.ClicksProvider.READ"
+            android:writePermission="com.rollncode.clicker.provider.ClicksProvider.WRITE"/>
+        
         <activity android:name="com.rollncode.clicker.screen.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
