@@ -1,5 +1,7 @@
 package com.rollncode.clicker.screen
 
+import android.database.Cursor
+import android.support.v4.app.LoaderManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -11,7 +13,7 @@ import kotlinx.android.synthetic.main.toolbar.*
  * @author Osadchiy Artem osadchiyzp93@gmail.com
  * @since 2018.01.11
  */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)

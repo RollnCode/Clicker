@@ -3,14 +3,12 @@ package com.rollncode.clicker.adapters
 import android.database.Cursor
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.rollncode.clicker.R
-import com.rollncode.clicker.storage.ClicksDbManager
-import com.rollncode.clicker.storage.ClicksDbManager.NUMBER_COLUMN_ALIAS
+import com.rollncode.clicker.loaders.BaseLoader
 import kotlinx.android.synthetic.main.view_item_list.view.*
 
 /**
@@ -47,9 +45,9 @@ class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysLis
             view.setOnClickListener(this)
         }
 
-        fun onBind(date: Pair<String, Int>, position: Int) {
-            itemView.tvDate.text = date.first
-            itemView.tvCount.text = date.second.toString()
+        fun onBind(date: Pair<String, Int>?, position: Int) {
+            itemView.tvDate.text = date?.first
+            itemView.tvCount.text = date?.second.toString()
             selectPosition = position
         }
 
@@ -57,19 +55,6 @@ class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysLis
             val selected = !selectedItems[selectPosition]
             setItemBackgroundColor(view, selected)
             selectedItems.put(selectPosition, selected)
-
-            /////System.currentTimeMillis().convertToDateString()
-            /*Log.d("logtag", itemView.tvDate.text.toString())
-            val cursor = ClicksDbManager.getClicksBySingleDate(itemView.tvDate.text.toString())
-            Log.d("logtag", cursor.count.toString())
-            if (cursor.count > 0) {
-                cursor.moveToPosition(0)
-                Log.d("logtag", cursor.getLong(cursor.getColumnIndex("timestamp")).toString())
-            }
-
-            while (cursor.moveToNext()) {
-                Log.d("logtag", cursor.getLong(cursor.getColumnIndex("timestamp")).toString())
-            }*/
         }
     }
 
@@ -77,15 +62,13 @@ class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysLis
         view?.setBackgroundColor(if (selected) Color.GRAY else Color.WHITE)
     }
 
-    private fun getItem(position: Int): Pair<String, Int> {
-        Log.d("logtag", "position: $position")
-        cursor.moveToPosition(position)
-        val pair = Pair(cursor.getString(cursor.getColumnIndex(ClicksDbManager.DATE_COLUMN_ALIAS)), cursor.getInt(cursor.getColumnIndex(NUMBER_COLUMN_ALIAS)))
-        Log.d("logtag", "pair: ${pair.first}  ${pair.second}")
+    private fun getItem(position: Int): Pair<String, Int>? {
+        return when {
+            position < 0 || position > itemCount -> throw IllegalStateException("Position is out cursor range")
+            cursor.moveToPosition(position) -> Pair(cursor.getString(cursor.getColumnIndex(BaseLoader.DATE_COLUMN_ALIAS)),
+                    cursor.getInt(cursor.getColumnIndex(BaseLoader.NUMBER_COLUMN_ALIAS)))
 
-        if (position == cursor.count - 1) {
-            cursor.close()
+            else -> null
         }
-        return pair
     }
 }

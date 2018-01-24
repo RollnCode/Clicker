@@ -19,15 +19,14 @@ class ClicksProvider : ContentProvider() {
     private val database by lazy { clicksDbHelper.writableDatabase }
 
     companion object {
-
         private const val CLICKS_LIST = 1
         private const val CLICKS_ID = 2
 
         private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
         init {
-            uriMatcher.addURI(ClicksContract.AUTHORITY, ClicksDbHelper.TABLE_NAME, CLICKS_LIST)
-            uriMatcher.addURI(ClicksContract.AUTHORITY, "${ClicksDbHelper.TABLE_NAME}/#", CLICKS_ID)
+            uriMatcher.addURI(ClicksContract.AUTHORITY, ClicksContract.Clicks.TABLE_NAME, CLICKS_LIST)
+            uriMatcher.addURI(ClicksContract.AUTHORITY, "${ClicksContract.Clicks.TABLE_NAME}/#", CLICKS_ID)
         }
     }
 
@@ -36,7 +35,7 @@ class ClicksProvider : ContentProvider() {
             var id = -1L
             database.beginTransaction()
             try {
-                id = database.insert(ClicksDbHelper.TABLE_NAME, null, cv)
+                id = database.insert(ClicksContract.Clicks.TABLE_NAME, null, cv)
 
                 if (id != -1L) {
                     database.setTransactionSuccessful()
@@ -54,10 +53,12 @@ class ClicksProvider : ContentProvider() {
 
     override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor {
         if (uriMatcher.match(uri) == CLICKS_LIST) {
-            val groupBy = if (TextUtils.isEmpty(selection)) "date(${ClicksContract.Clicks.TIMESTAMP_COLUMN_NAME} / 1000,'unixepoch')" else null
+            val groupBy = if (TextUtils.isEmpty(selection)) "date(${ClicksContract.Clicks.TIMESTAMP} / 1000,'unixepoch')" else null
             val sort = if (TextUtils.isEmpty(sortOrder)) ClicksContract.Clicks.SORT_ORDER_DEFAULT else sortOrder
 
-            return database.query(ClicksDbHelper.TABLE_NAME, projection, selection, selectionArgs, groupBy, null, sort)
+            val cursor = database.query(ClicksContract.Clicks.TABLE_NAME, projection, selection, selectionArgs, groupBy, null, sort)
+            cursor.setNotificationUri(context.contentResolver, uri)
+            return cursor
 
         } else {
             throw IllegalArgumentException("Unsupported URI for query: $uri")
@@ -88,28 +89,26 @@ class ClicksProvider : ContentProvider() {
 
     private fun getUriForId(id: Long, uri: Uri?): Uri {
         if (id > 0) {
-            return ContentUris.withAppendedId(uri, id)
+            val appendedUri = ContentUris.withAppendedId(uri, id)
+            context.contentResolver.notifyChange(appendedUri, null)
+            return appendedUri/*ContentUris.withAppendedId(uri, id)*/
 
         } else {
             throw SQLException("Problem while inserting into uri: $uri")
         }
     }
 
-    private class ClicksDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-        companion object {
-            const val DATABASE_NAME = "clicks.db"
-            const val DATABASE_VERSION = 1
-            const val TABLE_NAME = "clicks"
-        }
+    private class ClicksDbHelper(context: Context) : SQLiteOpenHelper(context, ClicksContract.DATABASE_NAME, null, ClicksContract.DATABASE_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase?) {
-            db?.execSQL("CREATE TABLE $TABLE_NAME (" +
+            db?.execSQL("CREATE TABLE ${ClicksContract.Clicks.TABLE_NAME} (" +
                     "id_ INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "${ClicksContract.Clicks.TIMESTAMP_COLUMN_NAME} INTEGER)")
+                    "${ClicksContract.Clicks.TIMESTAMP} INTEGER)")
         }
 
         override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-            db?.execSQL("DROP TABLE $TABLE_NAME")
+            db?.execSQL("DROP TABLE IF EXISTS ${ClicksContract.Clicks.TABLE_NAME}")
+            onCreate(db)
         }
     }
 }

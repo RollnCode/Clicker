@@ -14,21 +14,24 @@ abstract class BaseLoader(context: Context) : AsyncTaskLoader<Cursor>(context) {
 
     private var cursor: Cursor? = null
 
+    companion object {
+        const val DATE_COLUMN_ALIAS = "date"
+        const val NUMBER_COLUMN_ALIAS = "number"
+    }
+
     override fun deliverResult(cursor: Cursor?) {
         if (isReset) {
             cursor?.close()
         }
 
-        val oldCursor = cursor
+        val oldCursor =  this.cursor
         this.cursor = cursor
 
         if (isStarted) {
             super.deliverResult(cursor)
         }
 
-        if (oldCursor != null) {
-            oldCursor.close()
-        }
+        oldCursor?.close()
     }
 
     override fun onStartLoading() {
@@ -60,3 +63,4 @@ abstract class BaseLoader(context: Context) : AsyncTaskLoader<Cursor>(context) {
         }
     }
 }
+

@@ -1,7 +1,6 @@
 package com.rollncode.clicker.application
 
 import android.app.Application
-import com.rollncode.clicker.storage.ClicksDbManager
 
 /**
  *
@@ -12,6 +11,6 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ClicksDbManager.initDataBase(this)
+        //ClicksDbManager.initDataBase(this)
     }
 }
