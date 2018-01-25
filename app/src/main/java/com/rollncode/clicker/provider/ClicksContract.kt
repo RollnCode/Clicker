@@ -24,9 +24,12 @@ class ClicksContract {
             const val TABLE_NAME = "clicks"
 
             val CONTENT_URI: Uri = Uri.withAppendedPath(ClicksContract.CONTENT_URI, "clicks")
+            val CONTENT_URI_GROUPED: Uri = Uri.withAppendedPath(CONTENT_URI, "groupByDates")
+
             const val CONTENT_TYPE = "${ContentResolver.CURSOR_DIR_BASE_TYPE}/vnd.com.rollncode.clicker.provider.clicks"
             const val CONTENT_ITEM_TYPE = "${ContentResolver.CURSOR_ITEM_BASE_TYPE}/vnd.com.rollncode.clicker.provider.clicks"
 
+            const val ID = "id_"
             const val TIMESTAMP = "timestamp"
             const val SORT_ORDER_DEFAULT = "$TIMESTAMP DESC"
         }

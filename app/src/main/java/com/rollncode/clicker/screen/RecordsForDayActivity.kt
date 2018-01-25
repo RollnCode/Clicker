@@ -2,11 +2,12 @@ package com.rollncode.clicker.screen
 
 import android.database.Cursor
 import android.os.Bundle
+import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.support.v7.widget.LinearLayoutManager
 import com.rollncode.clicker.R
 import com.rollncode.clicker.adapters.DaysListAdapter
-import com.rollncode.clicker.loaders.ClicksByDatesLoader
+import com.rollncode.clicker.provider.ClicksContract
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -16,6 +17,11 @@ import kotlinx.android.synthetic.main.toolbar.*
  * @since 2018.01.11
  */
 class RecordsForDayActivity : BaseActivity() {
+
+    companion object {
+        const val DATE_COLUMN_ALIAS = "date"
+        const val NUMBER_COLUMN_ALIAS = "number"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +39,11 @@ class RecordsForDayActivity : BaseActivity() {
         rvList.adapter = if (data == null) null else DaysListAdapter(data)
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle?) = ClicksByDatesLoader(this)
+    override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this,
+            ClicksContract.Clicks.CONTENT_URI_GROUPED,
+            arrayOf("strftime('%Y-%m-%d',${ClicksContract.Clicks.TIMESTAMP} / 1000,'unixepoch') as ${RecordsForDayActivity.DATE_COLUMN_ALIAS}",
+                    "COUNT(*) as ${RecordsForDayActivity.NUMBER_COLUMN_ALIAS}"),
+            null, null, null)
 
     override fun onLoaderReset(loader: Loader<Cursor>?) {
 

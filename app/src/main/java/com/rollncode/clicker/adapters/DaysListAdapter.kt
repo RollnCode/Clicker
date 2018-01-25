@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.rollncode.clicker.R
-import com.rollncode.clicker.loaders.BaseLoader
+import com.rollncode.clicker.screen.RecordsForDayActivity
 import kotlinx.android.synthetic.main.view_item_list.view.*
 
 /**
@@ -64,9 +64,9 @@ class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysLis
 
     private fun getItem(position: Int): Pair<String, Int>? {
         return when {
-            position < 0 || position > itemCount -> throw IllegalStateException("Position is out cursor range")
-            cursor.moveToPosition(position) -> Pair(cursor.getString(cursor.getColumnIndex(BaseLoader.DATE_COLUMN_ALIAS)),
-                    cursor.getInt(cursor.getColumnIndex(BaseLoader.NUMBER_COLUMN_ALIAS)))
+            position < 0 || position > itemCount -> throw IllegalStateException("Position is out of cursor range")
+            cursor.moveToPosition(position) -> Pair(cursor.getString(cursor.getColumnIndex(RecordsForDayActivity.DATE_COLUMN_ALIAS)),
+                    cursor.getInt(cursor.getColumnIndex(RecordsForDayActivity.NUMBER_COLUMN_ALIAS)))
 
             else -> null
         }
