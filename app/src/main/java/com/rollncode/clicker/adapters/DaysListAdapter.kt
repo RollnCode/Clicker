@@ -71,4 +71,13 @@ class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysLis
             else -> null
         }
     }
+
+    fun getSelectedItems(): MutableList<String>? {
+        val selectedDates = mutableListOf<String>()
+        (0..selectedItems.size())
+                .filter { selectedItems[it] }
+                .forEach { selectedDates.add(getItem(it)!!.first) }
+
+        return if (selectedDates.size == 0) null else selectedDates
+    }
 }

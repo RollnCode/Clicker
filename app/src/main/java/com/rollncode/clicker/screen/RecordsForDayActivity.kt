@@ -18,6 +18,8 @@ import kotlinx.android.synthetic.main.toolbar.*
  */
 class RecordsForDayActivity : BaseActivity() {
 
+    private var adapter: DaysListAdapter? = null
+
     companion object {
         const val DATE_COLUMN_ALIAS = "date"
         const val NUMBER_COLUMN_ALIAS = "number"
@@ -36,7 +38,10 @@ class RecordsForDayActivity : BaseActivity() {
     override fun hasBackButton() = true
 
     override fun onLoadFinished(loader: Loader<Cursor>?, data: Cursor?) {
-        rvList.adapter = if (data == null) null else DaysListAdapter(data)
+        if (data != null) {
+            adapter = DaysListAdapter(data)
+            rvList.adapter = adapter
+        }
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this,
@@ -47,5 +52,22 @@ class RecordsForDayActivity : BaseActivity() {
 
     override fun onLoaderReset(loader: Loader<Cursor>?) {
 
+    }
+
+    override fun generateSharableCursor(): Cursor? {
+        val selectedDates = adapter?.getSelectedItems()
+
+        val sb = StringBuilder()
+        if (selectedDates != null) {
+            for (date in selectedDates) {
+                if (date == selectedDates.last()) {
+                    sb.append("?")
+                } else {
+                    sb.append("?,")
+                }
+            }
+            return shareCursorQuery(sb.toString(), selectedDates.toTypedArray())
+        }
+        return null
     }
 }
