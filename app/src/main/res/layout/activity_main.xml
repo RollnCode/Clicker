@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.ClickActivity">
     
-    <include layout="@layout/toolbar"/>
-    
     <Button
         android:id="@+id/btnClick"
         android:layout_width="match_parent"
@@ -29,4 +27,6 @@
         android:text="@string/undo"
         android:textAllCaps="false"
         android:textSize="@dimen/textNormal"/>
+    
+    <include layout="@layout/toolbar"/>
 </FrameLayout>

@@ -85,7 +85,7 @@ class ContentProvider : ContentProvider() {
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
         if (matcher.match(uri) == TYPE_DELETE) {
-            val delete = dbHelper.writableDatabase.delete(ClickColumns.TABLE_NAME, "${ClickColumns.ID} = ${uri.pathSegments[1]}", selectionArgs)
+            val delete = dbHelper.writableDatabase.delete(ClickColumns.TABLE_NAME, "${ClickColumns.TIMESTAMP} = ${uri.pathSegments[1]}", selectionArgs)
 
             context.contentResolver.notifyChange(uri, null)
             return delete

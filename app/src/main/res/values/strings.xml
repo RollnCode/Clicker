@@ -6,6 +6,4 @@
     
     <string name="share">Share</string>
     <string name="all_dates">All dates</string>
-    
-    <string name="format_click_today_d">Clicks for today:\n%1$d</string>
 </resources>

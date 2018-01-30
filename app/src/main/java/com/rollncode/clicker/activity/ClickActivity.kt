@@ -9,14 +9,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import com.rollncode.clicker.R
 import com.rollncode.clicker.content.MetaData.ClickColumns
 import com.rollncode.clicker.extension.convertToDateString
 import kotlinx.android.synthetic.main.activity_main.*
 
-class ClickActivity : BaseActivity(), View.OnClickListener {
+class ClickActivity : BaseActivity(), OnClickListener, OnLongClickListener {
 
     private val contentValues = ContentValues()
+    private var lastTimestamp = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,21 @@ class ClickActivity : BaseActivity(), View.OnClickListener {
         else             -> super.onOptionsItemSelected(item)
     }
 
+    override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this, ClickColumns.CONTENT_URI,
+            arrayOf("COUNT(*) as ${ClickColumns.ID}", "MAX(${ClickColumns.TIMESTAMP}) as ${ClickColumns.TIMESTAMP}"),
+            "date(${ClickColumns.TIMESTAMP} / 1000,'unixepoch') LIKE ?",
+            arrayOf(System.currentTimeMillis().convertToDateString()), null)
+
+    override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor) {
+        if (cursor.moveToFirst()) {
+            val count = cursor.getInt(cursor.getColumnIndex(ClickColumns.ID))
+            btnClick.text = if (count <= 0) getString(R.string.click) else count.toString()
+            lastTimestamp = cursor.getLong(cursor.getColumnIndex(ClickColumns.TIMESTAMP))
+        }
+    }
+
+    override fun onLoaderReset(loader: Loader<Cursor>?) = Unit
+
     override fun onClick(view: View) = when (view.id) {
         R.id.btnClick -> EXECUTOR.execute {
             synchronized(contentValues) {
@@ -51,36 +69,20 @@ class ClickActivity : BaseActivity(), View.OnClickListener {
             }
         }
         R.id.btnUndo  -> EXECUTOR.execute {
-            contentResolver.delete(Uri.withAppendedPath(ClickColumns.CONTENT_URI, getLastRecordId().toString()), null, null)
+            contentResolver.delete(Uri.withAppendedPath(ClickColumns.CONTENT_URI, lastTimestamp.toString()), null, null)
         }
         else          -> Unit
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this, ClickColumns.CONTENT_URI,
-            arrayOf("COUNT(*) as ${ClickColumns.ID}"),
-            "date(${ClickColumns.TIMESTAMP} / 1000,'unixepoch') LIKE ?",
-            arrayOf(System.currentTimeMillis().convertToDateString()), null)
-
-    override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-        if (data.moveToFirst()) {
-            btnClick.text = resources.getString(R.string.format_click_today_d, data.getInt(data.getColumnIndex(ClickColumns.ID)))
+    override fun onLongClick(v: View) = when (v.id) {
+        R.id.btnClick -> {
+            true
         }
-    }
-
-    override fun onLoaderReset(loader: Loader<Cursor>?) = Unit
-
-    private fun getLastRecordId(): Int { //TODO: make with another way
-        val cursor = contentResolver.query(ClickColumns.CONTENT_URI, arrayOf("MAX(${ClickColumns.ID}) as ${ClickColumns.ID}"), null, null, null)
-
-        var lastId = 0
-        if (cursor.moveToFirst()) {
-            lastId = cursor.getInt(cursor.getColumnIndex(ClickColumns.ID))
+        R.id.btnUndo  -> {
+            //TODO:
+            true
         }
-        cursor.close()
-
-        if (lastId < 0) throw IllegalStateException("Invalid id")
-
-        return lastId
+        else          -> true
     }
 
     override fun getShareData() = shareCursorQuery(System.currentTimeMillis().convertToDateString())

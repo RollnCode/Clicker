@@ -42,7 +42,7 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (isBackButtonAvailable()) {
+        if (isDisplayHomeAsUpEnabled()) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             menu.findItem(R.id.action_list)?.isVisible = false
         }
@@ -80,7 +80,7 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
             "date(${ClickColumns.TIMESTAMP} / 1000,'unixepoch') IN (${args.map { "?" }.joinToString(",")})",
             args, null)
 
-    protected open fun isBackButtonAvailable() = false
+    protected open fun isDisplayHomeAsUpEnabled() = false
 
     @WorkerThread
     protected abstract fun getShareData(): Cursor

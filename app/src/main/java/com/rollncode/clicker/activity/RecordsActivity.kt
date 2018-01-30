@@ -16,17 +16,17 @@ import kotlinx.android.synthetic.main.activity_list.*
  */
 class RecordsActivity : BaseActivity() {
 
-    private val adapter: RecordsAdapter by lazy { RecordsAdapter(this@RecordsActivity) }
+    private lateinit var adapter: RecordsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
+        adapter = RecordsAdapter(this)
         listView.adapter = adapter
+
         loaderManager.initLoader(0, null, this)
     }
-
-    override fun isBackButtonAvailable() = true
 
     override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this, ClickColumns.CONTENT_URI_GROUPED,
             arrayOf(ClickColumns.TIMESTAMP, "COUNT(*) as ${ClickColumns.ID}"), null, null, null)
@@ -35,6 +35,8 @@ class RecordsActivity : BaseActivity() {
             = adapter.changeCursor(data)
 
     override fun onLoaderReset(loader: Loader<Cursor>?) = Unit
+
+    override fun isDisplayHomeAsUpEnabled() = true
 
     override fun getShareData() = adapter.getActivatedList().run {
         shareCursorQuery(*toTypedArray())
