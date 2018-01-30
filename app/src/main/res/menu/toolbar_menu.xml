@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
     
     <item
         android:id="@+id/action_list"
         android:icon="@drawable/svg_list"
-        android:title="@string/list"
-        app:showAsAction="ifRoom"/>
+        android:title="@string/all_dates"
+        app:showAsAction="always"/>
     
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/svg_share"
         android:title="@string/share"
-        app:showAsAction="ifRoom"/>
-    
+        app:showAsAction="always"/>
 </menu>

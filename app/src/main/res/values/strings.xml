@@ -2,11 +2,10 @@
     <string name="app_name">Clicker</string>
     
     <string name="click">Click</string>
-    <string name="remove_record">Remove previous record</string>
+    <string name="undo">Remove last record</string>
     
     <string name="share">Share</string>
-    <string name="list">List</string>
+    <string name="all_dates">All dates</string>
     
-    <string name="format_s_today_clicks">Clicks for today:\n%1$d</string>
-    
+    <string name="format_click_today_d">Clicks for today:\n%1$d</string>
 </resources>

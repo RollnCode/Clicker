@@ -1,51 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rollncode.clicker.com.rollncode.clicker.screen.MainActivity">
+    tools:context=".activity.ClickActivity">
     
     <include layout="@layout/toolbar"/>
     
-    <android.support.constraint.Guideline
-        android:id="@+id/glTop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25"/>
-    
-    <android.support.constraint.Guideline
-        android:id="@+id/glBottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.75"/>
-    
     <Button
-        android:id="@+id/btnRecord"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/spacing"
-        android:layout_marginEnd="@dimen/spacing_x2"
-        android:layout_marginStart="@dimen/spacing_x2"
-        android:layout_marginTop="@dimen/spacing"
+        android:id="@+id/btnClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/spacing"
+        android:minHeight="240dp"
+        android:padding="@dimen/spacing"
         android:text="@string/click"
-        app:layout_constraintBottom_toBottomOf="@+id/glBottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/glTop"/>
+        android:textSize="@dimen/textNormal"/>
     
     <Button
-        android:id="@+id/btnRemoveRecord"
-        android:layout_width="0dp"
+        android:id="@+id/btnUndo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing"
-        android:text="@string/remove_record"
+        android:layout_gravity="bottom"
+        android:layout_margin="@dimen/spacing"
+        android:padding="@dimen/spacing"
+        android:text="@string/undo"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/btnRecord"
-        app:layout_constraintStart_toStartOf="@+id/btnRecord"/>
-
-</android.support.constraint.ConstraintLayout>
+        android:textSize="@dimen/textNormal"/>
+</FrameLayout>

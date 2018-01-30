@@ -1,26 +1,18 @@
-package com.rollncode.clicker.adapters
-
-import android.database.Cursor
-import android.graphics.Color
-import android.support.v7.widget.RecyclerView
-import android.util.SparseBooleanArray
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.rollncode.clicker.R
-import com.rollncode.clicker.screen.RecordsForDayActivity
-import kotlinx.android.synthetic.main.view_item_list.view.*
+package com.rollncode.clicker.adapter
 
 /**
  *
  * @author Osadchiy Artem osadchiyzp93@gmail.com
  * @since 2018.01.12
  */
+/*
+@Deprecated("Since RecordsAdapter")
 class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysListAdapter.DateViewHolder>() {
 
     private val selectedItems: SparseBooleanArray = SparseBooleanArray(cursor.count)
 
     init {
+        //TODO: this is useless
         for (index in 0..cursor.count) {
             selectedItems.put(index, false)
         }
@@ -65,19 +57,19 @@ class DaysListAdapter(private val cursor: Cursor) : RecyclerView.Adapter<DaysLis
     private fun getItem(position: Int): Pair<String, Int>? {
         return when {
             position < 0 || position > itemCount -> throw IllegalStateException("Position is out of cursor range")
-            cursor.moveToPosition(position) -> Pair(cursor.getString(cursor.getColumnIndex(RecordsForDayActivity.DATE_COLUMN_ALIAS)),
-                    cursor.getInt(cursor.getColumnIndex(RecordsForDayActivity.NUMBER_COLUMN_ALIAS)))
+            cursor.moveToPosition(position)      -> Pair(cursor.getString(cursor.getColumnIndex(ClickColumns.TIMESTAMP)),
+                    cursor.getInt(cursor.getColumnIndex(ClickColumns.ID)))
 
-            else -> null
+            else                                 -> null
         }
     }
 
     fun getSelectedItems(): MutableList<String>? {
         val selectedDates = mutableListOf<String>()
         (0..selectedItems.size())
-                .filter { selectedItems[it] }
-                .forEach { selectedDates.add(getItem(it)!!.first) }
+            .filter { selectedItems[it] }
+            .forEach { selectedDates.add(getItem(it)!!.first) }
 
         return if (selectedDates.size == 0) null else selectedDates
     }
-}
+}*/

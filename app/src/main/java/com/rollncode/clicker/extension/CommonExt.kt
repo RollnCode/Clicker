@@ -1,12 +1,13 @@
-package com.rollncode.clicker.extensions
+package com.rollncode.clicker.extension
 
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import android.support.annotation.WorkerThread
 import android.support.v4.app.ShareCompat
 import android.support.v4.content.ContextCompat.startActivity
-import com.rollncode.clicker.provider.ClicksContract
+import com.rollncode.clicker.content.MetaData.ClickColumns
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -16,19 +17,19 @@ import java.io.IOException
  * @author Osadchiy Artem osadchiyzp93@gmail.com
  * @since 2018.01.29
  */
+@WorkerThread
 fun Cursor.convertToMap(): Map<String, List<Long>> {
     val stamps = mutableListOf<Long>()
     if (moveToFirst()) {
-        stamps.add(getLong(getColumnIndex(ClicksContract.Clicks.TIMESTAMP)))
-        while (moveToNext()) {
-            stamps.add(getLong(getColumnIndex(ClicksContract.Clicks.TIMESTAMP)))
-        }
+        stamps.add(getLong(getColumnIndex(ClickColumns.TIMESTAMP)))
+        while (moveToNext())
+            stamps.add(getLong(getColumnIndex(ClickColumns.TIMESTAMP)))
     }
-    close()
     return stamps.groupBy { it.convertToDateString() }
 }
 
-fun Map<String, List<Long>>.convertToJSON(): String {
+//TODO: why not use [JSON] class?
+fun Map<String, List<Long>>.toJSON(): String {
     val sb = StringBuilder()
     sb.append("{\n\"days\":[")
 
@@ -80,8 +81,8 @@ fun File.writeToCache(json: String): File {
 
 fun Uri.shareFile(activity: Activity) {
     val shareIntent = ShareCompat.IntentBuilder.from(activity)
-            .setStream(this)
-            .intent
+        .setStream(this)
+        .intent
 
     shareIntent.data = this
     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
