@@ -56,16 +56,36 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
             } else {
                 val context = this
                 execute {
-                    val cursor = context.queryDates(*dates.map { it.toTimestamp() }.toTypedArray())
+                    val timestamps = dates.map { it.toTimestamp() }.toTypedArray()
+                    val cursor = context.queryDates(*timestamps)
                     val json = cursor.toJSONArray()
                     val file = context.createSharedFile(json)
-                    val uri = FileProvider.getUriForFile(context, "com.rollncode.clicker.file_provider", file)
-                    val intent = ShareCompat.IntentBuilder.from(context).setStream(uri).intent
-                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        .setData(uri)
 
-                    if (intent.resolveActivity(context.packageManager) != null) {
-                        ContextCompat.startActivity(context, intent, null)
+                    if (file.exists()) {
+                        val uri = FileProvider.getUriForFile(context, "com.rollncode.clicker.file_provider", file)
+
+                        timestamps.sortDescending()
+                        val subject = context.getString(R.string.email_subject)
+                        val text = timestamps.joinToString("\n")
+                        val mailTo = arrayOf("")
+
+                        @Suppress("DEPRECATION")
+                        val intent = Intent(Intent.ACTION_SEND, uri)
+                            .setType("text/*")
+                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+                            .putExtra(ShareCompat.EXTRA_CALLING_ACTIVITY, context.componentName)
+                            .putExtra(ShareCompat.EXTRA_CALLING_PACKAGE, context.packageName)
+                            .putExtra(Intent.EXTRA_SUBJECT, subject)
+                            .putExtra(Intent.EXTRA_EMAIL, mailTo)
+                            .putExtra(Intent.EXTRA_STREAM, uri)
+                            .putExtra(Intent.EXTRA_TEXT, text)
+
+                        if (intent.resolveActivity(context.packageManager) != null)
+                            ContextCompat.startActivity(context, intent, null)
+
+                    } else {
+                        //TODO: show message about clear cache
                     }
                 }
             }

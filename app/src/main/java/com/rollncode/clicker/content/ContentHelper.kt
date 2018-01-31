@@ -70,10 +70,27 @@ private fun createJSONObject(dayTimestamp: Long, clicks: JSONArray) = JSONObject
 
 @WorkerThread
 fun Context.createSharedFile(json: JSONArray) = File(cacheDir, "share/report.json").apply {
-    if (exists()) delete()
-    createNewFile()
+    var exception: Boolean
+    var counter = 0
 
-    writeText(json.toString())
+    do {
+        exception = try {
+            delete()
+            createNewFile()
+
+            false
+
+        } catch (e: Exception) {
+            mkdirs()
+            true
+        }
+
+    } while (exception && counter++ < 16)
+
+    if (exception)
+        delete()
+    else
+        writeText(json.toString())
 }
 
 private val date = Date()

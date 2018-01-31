@@ -7,4 +7,5 @@
     <string name="share">Share</string>
     <string name="all_dates">All dates</string>
     <string name="No_data_share">Nothing to share</string>
+    <string name="email_subject">[Clicks report].json</string>
 </resources>
