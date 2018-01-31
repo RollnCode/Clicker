@@ -18,15 +18,24 @@ android {
         //TODO: this is not needed if there is no instrumental tests - implement tests or remove
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        keystore {
+            storeFile file("keystore")
+
+            keyAlias "rollncode"
+            keyPassword "rollncode"
+            storePassword "rollncode"
+        }
+    }
     buildTypes {
         debug {
-//            signingConfig signingConfigs.keystore
+            signingConfig signingConfigs.keystore
             versionNameSuffix ":debug"
 
             debuggable true
         }
         release {
-//            signingConfig signingConfigs.keystore
+            signingConfig signingConfigs.keystore
 
             debuggable false
             minifyEnabled true

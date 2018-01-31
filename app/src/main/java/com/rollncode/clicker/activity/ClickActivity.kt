@@ -36,13 +36,12 @@ class ClickActivity : BaseActivity(), OnClickListener {
         tvDate.text = System.currentTimeMillis().toTimestamp()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_list -> {
-            startActivity(Intent(this, RecordsActivity::class.java))
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_list) {
+        startActivity(Intent(this, RecordsActivity::class.java))
+        true
 
-            true
-        }
-        else             -> super.onOptionsItemSelected(item)
+    } else {
+        super.onOptionsItemSelected(item)
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this, ClickColumns.CONTENT_URI,
