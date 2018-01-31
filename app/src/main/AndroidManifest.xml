@@ -24,8 +24,6 @@
         
         <activity android:name=".activity.RecordsActivity"/>
         
-        <!--TODO: put `provider` and other things below `activity`. The order is: `activity`, `service`, `receiver`, `provider`, `meta-data`-->
-        
         <provider
             android:name=".content.ContentProvider"
             android:authorities="com.rollncode.clicker.content_provider"

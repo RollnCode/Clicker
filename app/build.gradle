@@ -14,7 +14,6 @@ android {
         versionCode 1
         versionName "1"
 
-        //TODO: this is not needed if there is no instrumental tests - implement tests or remove
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     flavorDimensions "main"
@@ -51,22 +50,10 @@ android {
     compileOptions { encoding "UTF-8" }
 }
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
-
     implementation "com.android.support:appcompat-v7:27.0.2"
-
     watchesImplementation "com.android.support:wear:27.0.2"
 
-//    implementation "com.android.support.constraint:constraint-layout:1.0.2"
-
-    //TODO: when you are using new gradle, you must avoid `compile` and instead it use `implementation`
-    //TODO: project must have minimum of dependencies
-//    implementation "com.android.support:recyclerview-v7:27.0.2"
-
-    //TODO: test imports must be at the end of dependencies - first for unit-testing, next instrumental
-    //TODO: why do you need such dependencies if they are do not used?
     testImplementation "junit:junit:4.12"
     androidTestImplementation "com.android.support.test:runner:1.0.1"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.1"
