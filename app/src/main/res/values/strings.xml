@@ -2,10 +2,11 @@
     <string name="app_name">Clicker</string>
     
     <string name="click">Click</string>
-    <string name="undo">Remove last record</string>
+    <string name="undo">Remove last click</string>
     
     <string name="share">Share</string>
-    <string name="all_dates">All dates</string>
-    <string name="No_data_share">Nothing to share</string>
+    <string name="all_dates">All recordings</string>
+    <string name="nothing_share">Nothing to share</string>
     <string name="email_subject">[Clicks report].json</string>
+    <string name="save_file_failure">Saving file failed! Clear cache or something…</string>
 </resources>

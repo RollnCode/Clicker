@@ -85,7 +85,7 @@ fun Context.createSharedFile(json: JSONArray) = File(cacheDir, "share/report.jso
             true
         }
 
-    } while (exception && counter++ < 16)
+    } while (exception && counter++ < 0xF)
 
     if (exception)
         delete()

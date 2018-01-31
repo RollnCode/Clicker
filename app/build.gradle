@@ -9,7 +9,6 @@ android {
     defaultConfig {
         applicationId "com.rollncode.clicker"
 
-        minSdkVersion 14
         targetSdkVersion 27
 
         versionCode 1
@@ -17,6 +16,11 @@ android {
 
         //TODO: this is not needed if there is no instrumental tests - implement tests or remove
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    flavorDimensions "main"
+    productFlavors {
+        common { minSdkVersion 14 }
+        watches { minSdkVersion 23 }
     }
     signingConfigs {
         keystore {
@@ -52,6 +56,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
 
     implementation "com.android.support:appcompat-v7:27.0.2"
+
+    watchesImplementation "com.android.support:wear:27.0.2"
+    watchesProvided "com.google.android.wearable:wearable:2.2.0"
+    watchesImplementation "com.google.android.support:wearable:2.2.0"
+
 //    implementation "com.android.support.constraint:constraint-layout:1.0.2"
 
     //TODO: when you are using new gradle, you must avoid `compile` and instead it use `implementation`

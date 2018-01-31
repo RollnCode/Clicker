@@ -4,6 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
+    <Space
+        android:id="@+id/btnShare"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+    
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

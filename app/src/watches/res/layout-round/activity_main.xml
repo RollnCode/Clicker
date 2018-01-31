@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activity.ClickActivity">
-    
-    <Button
-        android:id="@+id/btnClick"
-        style="@style/Button"
-        android:layout_height="240dp"
-        android:layout_gravity="center"
-        android:text="@string/click"/>
     
     <Button
         android:id="@+id/btnUndo"
         style="@style/Button"
-        android:layout_gravity="bottom"
+        android:layout_weight="2"
         android:text="@string/undo"/>
     
-    <TextView
-        android:id="@+id/tvDate"
-        style="@style/TextView"
-        android:layout_marginTop="?attr/actionBarSize"
-        tools:text="2018-01-31"/>
-    
     <include layout="@layout/toolbar"/>
-</FrameLayout>
+    
+    <Button
+        android:id="@+id/btnClick"
+        style="@style/Button"
+        android:layout_weight="3"
+        android:text="@string/click"/>
+</LinearLayout>

@@ -24,16 +24,25 @@ class ClickActivity : BaseActivity(), OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loaderManager.initLoader(0, null, this)
-
-        btnClick.post {
+        @Suppress("ConstantConditionIf")
+        if (COMMON && btnClick.tag == null) btnClick.post {
             btnClick.layoutParams.height = btnClick.width
             btnClick.requestLayout()
         }
         btnClick.setOnClickListener(this)
         btnUndo.setOnClickListener(this)
 
-        tvDate.text = System.currentTimeMillis().toTimestamp()
+        loaderManager.initLoader(0, null, this)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+
+        val title = System.currentTimeMillis().toTimestamp()
+        if (tvDate == null)
+            supportActionBar?.title = title
+        else
+            tvDate!!.text = title
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_list) {

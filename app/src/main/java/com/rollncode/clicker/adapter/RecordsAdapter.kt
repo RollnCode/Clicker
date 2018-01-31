@@ -36,6 +36,10 @@ class RecordsAdapter(context: Context) : CursorAdapter(context, null, false), On
         super.notifyDataSetChanged()
     }
 
+    fun setActivatedDates(vararg dates: Long) = dates.forEach {
+        activated[it] = true
+    }
+
     fun getActivatedDates()
             = activated.keys.toTypedArray()
 }

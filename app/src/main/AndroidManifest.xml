@@ -14,9 +14,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         
-        <activity
-            android:name=".activity.ClickActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".activity.ClickActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 
@@ -24,9 +22,7 @@
             </intent-filter>
         </activity>
         
-        <activity
-            android:name=".activity.RecordsActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.RecordsActivity"/>
         
         <!--TODO: put `provider` and other things below `activity`. The order is: `activity`, `service`, `receiver`, `provider`, `meta-data`-->
         

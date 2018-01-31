@@ -1,6 +1,7 @@
 package com.rollncode.clicker.activity
 
 import android.app.LoaderManager
+import android.content.Context
 import android.content.Intent
 import android.content.Loader
 import android.database.Cursor
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.rollncode.clicker.BuildConfig
 import com.rollncode.clicker.R
 import com.rollncode.clicker.content.createSharedFile
 import com.rollncode.clicker.content.queryDates
@@ -31,7 +33,6 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
-
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -49,49 +50,53 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
             true
         }
         R.id.action_share -> {
-            val dates = getShareDates()
-            if (dates.isEmpty()) {
-                Toast.makeText(this, R.string.No_data_share, Toast.LENGTH_LONG).show()
-
-            } else {
-                val context = this
-                execute {
-                    val timestamps = dates.map { it.toTimestamp() }.toTypedArray()
-                    val cursor = context.queryDates(*timestamps)
-                    val json = cursor.toJSONArray()
-                    val file = context.createSharedFile(json)
-
-                    if (file.exists()) {
-                        val uri = FileProvider.getUriForFile(context, "com.rollncode.clicker.file_provider", file)
-
-                        timestamps.sortDescending()
-                        val subject = context.getString(R.string.email_subject)
-                        val text = timestamps.joinToString("\n")
-                        val mailTo = arrayOf("")
-
-                        @Suppress("DEPRECATION")
-                        val intent = Intent(Intent.ACTION_SEND, uri)
-                            .setType("text/*")
-                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-                            .putExtra(ShareCompat.EXTRA_CALLING_ACTIVITY, context.componentName)
-                            .putExtra(ShareCompat.EXTRA_CALLING_PACKAGE, context.packageName)
-                            .putExtra(Intent.EXTRA_SUBJECT, subject)
-                            .putExtra(Intent.EXTRA_EMAIL, mailTo)
-                            .putExtra(Intent.EXTRA_STREAM, uri)
-                            .putExtra(Intent.EXTRA_TEXT, text)
-
-                        if (intent.resolveActivity(context.packageManager) != null)
-                            ContextCompat.startActivity(context, intent, null)
-
-                    } else {
-                        //TODO: show message about clear cache
-                    }
-                }
-            }
+            clickShare()
             true
         }
         else              -> super.onOptionsItemSelected(item)
+    }
+
+    protected fun clickShare() {
+        val dates = getShareDates()
+        if (dates.isEmpty()) {
+            makeText(R.string.nothing_share)
+
+        } else {
+            val context = this
+            execute {
+                val timestamps = dates.map { it.toTimestamp() }.toTypedArray()
+                val cursor = context.queryDates(*timestamps)
+                val json = cursor.toJSONArray()
+                val file = context.createSharedFile(json)
+
+                if (file.exists()) {
+                    val uri = FileProvider.getUriForFile(context, "com.rollncode.clicker.file_provider", file)
+
+                    timestamps.sortDescending()
+                    val subject = context.getString(R.string.email_subject)
+                    val text = timestamps.joinToString("\n")
+                    val mailTo = arrayOf("")
+
+                    @Suppress("DEPRECATION")
+                    val intent = Intent(Intent.ACTION_SEND, uri)
+                        .setType("text/*")
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+                        .putExtra(ShareCompat.EXTRA_CALLING_ACTIVITY, context.componentName)
+                        .putExtra(ShareCompat.EXTRA_CALLING_PACKAGE, context.packageName)
+                        .putExtra(Intent.EXTRA_SUBJECT, subject)
+                        .putExtra(Intent.EXTRA_EMAIL, mailTo)
+                        .putExtra(Intent.EXTRA_STREAM, uri)
+                        .putExtra(Intent.EXTRA_TEXT, text)
+
+                    if (intent.resolveActivity(context.packageManager) != null)
+                        ContextCompat.startActivity(context, intent, null)
+
+                } else context.runOnUiThread {
+                    makeText(R.string.save_file_failure)
+                }
+            }
+        }
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>?) = Unit
@@ -104,3 +109,8 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
 private val executor: ExecutorService = Executors.newFixedThreadPool(4)
 
 fun execute(block: () -> Unit) = executor.execute(block)
+
+const val COMMON = BuildConfig.FLAVOR == "common"
+
+fun Context.makeText(stringRes: Int)
+        = Toast.makeText(this, stringRes, Toast.LENGTH_LONG).show()
