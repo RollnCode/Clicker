@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.rollncode.clicker">
+    
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        
+        <activity
+            android:name=".activity.ClickActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".activity.RecordsActivity"
+            android:screenOrientation="portrait"/>
+        
+        <!--TODO: put `provider` and other things below `activity`. The order is: `activity`, `service`, `receiver`, `provider`, `meta-data`-->
+        
+        <provider
+            android:name=".content.ContentProvider"
+            android:authorities="com.rollncode.clicker.content_provider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:label="clicksProvider"
+            android:readPermission="com.rollncode.clicker.content_provider.READ"
+            android:writePermission="com.rollncode.clicker.content_provider.WRITE"/>
+        
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.rollncode.clicker.file_provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+    </application>
+</manifest>

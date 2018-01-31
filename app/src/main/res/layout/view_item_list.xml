@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sel_activated"
+    android:foreground="?android:attr/selectableItemBackground">
+    
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|start"
+        android:padding="@dimen/spacing"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/textNormal"
+        tools:text="10.05.2018"/>
+    
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:padding="@dimen/spacing"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/textNormal"
+        android:textStyle="bold"
+        tools:text="20"/>
+</FrameLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ClickActivity">
+    
+    <Button
+        android:id="@+id/btnClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/spacing"
+        android:minHeight="240dp"
+        android:padding="@dimen/spacing"
+        android:text="@string/click"
+        android:textSize="@dimen/textNormal"/>
+    
+    <Button
+        android:id="@+id/btnUndo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="@dimen/spacing"
+        android:padding="@dimen/spacing"
+        android:text="@string/undo"
+        android:textAllCaps="false"
+        android:textSize="@dimen/textNormal"/>
+    
+    <include layout="@layout/toolbar"/>
+</FrameLayout>
