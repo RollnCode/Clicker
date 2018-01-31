@@ -32,7 +32,7 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        menuInflater.inflate(R.menu.activity, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -107,10 +107,9 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
 }
 
 private val executor: ExecutorService = Executors.newFixedThreadPool(4)
+const val COMMON = BuildConfig.FLAVOR == "common"
 
 fun execute(block: () -> Unit) = executor.execute(block)
-
-const val COMMON = BuildConfig.FLAVOR == "common"
 
 fun Context.makeText(stringRes: Int)
         = Toast.makeText(this, stringRes, Toast.LENGTH_LONG).show()
