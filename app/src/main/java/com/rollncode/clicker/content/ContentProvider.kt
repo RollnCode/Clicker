@@ -57,6 +57,27 @@ class ContentProvider : ContentProvider() {
         throw IllegalArgumentException("Unsupported URI for insertion: $uri")
     }
 
+    override fun bulkInsert(uri: Uri, values: Array<out ContentValues>?): Int {
+        if (matcher.match(uri) == TYPE_LIST && values != null) {
+            val database = dbHelper.writableDatabase
+
+            database.beginTransaction()
+            try {
+                val count = values.count {
+                    database.insertWithOnConflict(ClickColumns.TABLE_NAME, null, it, SQLiteDatabase.CONFLICT_IGNORE) != -1L
+                }
+                database.setTransactionSuccessful()
+                context.contentResolver.notifyChange(uri, null)
+
+                return count
+
+            } finally {
+                database.endTransaction()
+            }
+        }
+        return super.bulkInsert(uri, values)
+    }
+
     override fun update(uri: Uri, cv: ContentValues?, p2: String?, p3: Array<out String>?) = throw NoSuchMethodError()
 
     override fun query(uri: Uri, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor {

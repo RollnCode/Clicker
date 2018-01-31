@@ -10,10 +10,12 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.View.OnClickListener
+import com.rollncode.clicker.BuildConfig
 import com.rollncode.clicker.R
 import com.rollncode.clicker.content.MetaData.ClickColumns
 import com.rollncode.clicker.content.toTimestamp
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class ClickActivity : BaseActivity(), OnClickListener {
 
@@ -29,6 +31,24 @@ class ClickActivity : BaseActivity(), OnClickListener {
             btnClick.layoutParams.height = btnClick.width
             btnClick.requestLayout()
         }
+        if (BuildConfig.DEBUG) execute {
+            val cvs = mutableListOf<ContentValues>()
+            val calendar = Calendar.getInstance()
+            var cv: ContentValues
+            val r = Random(0)
+
+            (0..32).forEach {
+                calendar.add(Calendar.DAY_OF_YEAR, -1)
+                (0..r.nextInt(32)).forEach {
+                    cv = ContentValues(1)
+                    cv.put(ClickColumns.ID, calendar.timeInMillis + it)
+
+                    cvs += cv
+                }
+            }
+            contentResolver.bulkInsert(ClickColumns.CONTENT_URI, cvs.toTypedArray())
+        }
+
         btnClick.setOnClickListener(this)
         btnUndo.setOnClickListener(this)
 
