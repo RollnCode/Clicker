@@ -1,34 +1,28 @@
 package com.rollncode.clicker.activity
 
 import android.app.LoaderManager
+import android.content.Intent
+import android.content.Loader
 import android.database.Cursor
+import android.os.AsyncTask.execute
 import android.os.Bundle
-import android.support.annotation.WorkerThread
+import android.support.v4.app.ShareCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.rollncode.clicker.R
-import com.rollncode.clicker.content.MetaData.ClickColumns
-import com.rollncode.clicker.extension.convertToMap
-import com.rollncode.clicker.extension.shareFile
-import com.rollncode.clicker.extension.toJSON
-import com.rollncode.clicker.extension.writeToCache
+import com.rollncode.clicker.content.createSharedFile
+import com.rollncode.clicker.content.queryDates
+import com.rollncode.clicker.content.toJSONArray
+import com.rollncode.clicker.content.toTimestamp
 import kotlinx.android.synthetic.main.toolbar.*
-import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-/**
- *
- * @author Osadchiy Artem osadchiyzp93@gmail.com
- * @since 2018.01.11
- */
 abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
-
-    companion object {
-        val EXECUTOR: ExecutorService = Executors.newFixedThreadPool(4)
-    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -55,18 +49,24 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
             true
         }
         R.id.action_share -> {
-            val context = this
-            EXECUTOR.execute {
-                getShareData().run {
-                    if (moveToFirst()) {
-                        val shareJSON = convertToMap().toJSON()
+            val dates = getShareDates()
+            if (dates.isEmpty()) {
+                Toast.makeText(this, R.string.No_data_share, Toast.LENGTH_LONG).show()
 
-                        val file = File("$cacheDir/share/").writeToCache(shareJSON)
-                        FileProvider
-                            .getUriForFile(context, "com.rollncode.clicker.file_provider", file)
-                            .shareFile(context)
+            } else {
+                val context = this
+                execute {
+                    val cursor = context.queryDates(*dates.map { it.toTimestamp() }.toTypedArray())
+                    val json = cursor.toJSONArray()
+                    val file = context.createSharedFile(json)
+                    val uri = FileProvider.getUriForFile(context, "com.rollncode.clicker.file_provider", file)
+                    val intent = ShareCompat.IntentBuilder.from(context).setStream(uri).intent
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        .setData(uri)
+
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        ContextCompat.startActivity(context, intent, null)
                     }
-                    close()
                 }
             }
             true
@@ -74,14 +74,13 @@ abstract class BaseActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks
         else              -> super.onOptionsItemSelected(item)
     }
 
-    protected fun shareCursorQuery(vararg args: String): Cursor
-            = contentResolver.query(ClickColumns.CONTENT_URI,
-            null,
-            "date(${ClickColumns.TIMESTAMP} / 1000,'unixepoch') IN (${args.map { "?" }.joinToString(",")})",
-            args, null)
+    override fun onLoaderReset(loader: Loader<Cursor>?) = Unit
 
     protected open fun isDisplayHomeAsUpEnabled() = false
 
-    @WorkerThread
-    protected abstract fun getShareData(): Cursor
+    protected abstract fun getShareDates(): Array<Long>
 }
+
+private val executor: ExecutorService = Executors.newFixedThreadPool(4)
+
+fun execute(block: () -> Unit) = executor.execute(block)

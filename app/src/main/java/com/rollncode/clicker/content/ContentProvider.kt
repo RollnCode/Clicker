@@ -12,11 +12,6 @@ import android.net.Uri
 import android.text.TextUtils
 import com.rollncode.clicker.content.MetaData.ClickColumns
 
-/**
- *
- * @author Osadchiy Artem osadchiyzp93@gmail.com
- * @since 2018.01.22
- */
 class ContentProvider : ContentProvider() {
 
     private val matcher = UriMatcher(UriMatcher.NO_MATCH)
@@ -25,7 +20,7 @@ class ContentProvider : ContentProvider() {
     init {
         matcher.addURI(MetaData.AUTHORITY, ClickColumns.TABLE_NAME, TYPE_LIST)
         matcher.addURI(MetaData.AUTHORITY, "${ClickColumns.TABLE_NAME}/#", TYPE_DELETE)
-        matcher.addURI(MetaData.AUTHORITY, "${ClickColumns.TABLE_NAME}/groupByDate", TYPE_GROUP)
+        matcher.addURI(MetaData.AUTHORITY, "${ClickColumns.TABLE_NAME}/${ClickColumns.GROUP_DAY}", TYPE_GROUP)
     }
 
     override fun onCreate(): Boolean {
@@ -48,7 +43,7 @@ class ContentProvider : ContentProvider() {
 
             database.beginTransaction()
             try {
-                val insert = database.insert(ClickColumns.TABLE_NAME, null, cv)
+                val insert = database.insertWithOnConflict(ClickColumns.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE)
 
                 if (insert != -1L) return ContentUris.withAppendedId(uri, insert).apply {
                     database.setTransactionSuccessful()
@@ -67,7 +62,7 @@ class ContentProvider : ContentProvider() {
     override fun query(uri: Uri, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor {
         val groupBy = when (matcher.match(uri)) {
             TYPE_LIST  -> null
-            TYPE_GROUP -> "date(${ClickColumns.TIMESTAMP} / 1000,'unixepoch')"
+            TYPE_GROUP -> ClickColumns.QUERY_TIMESTAMP
 
             else       -> throw IllegalArgumentException("Unsupported URI for query: $uri")
         }
@@ -77,7 +72,7 @@ class ContentProvider : ContentProvider() {
                 selectionArgs,
                 groupBy,
                 null,
-                if (TextUtils.isEmpty(sortOrder)) ClickColumns.SORT_ORDER_DEFAULT else sortOrder)
+                if (TextUtils.isEmpty(sortOrder)) ClickColumns.SORT_ORDER else sortOrder)
 
         cursor.setNotificationUri(context.contentResolver, uri)
         return cursor
@@ -85,7 +80,7 @@ class ContentProvider : ContentProvider() {
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
         if (matcher.match(uri) == TYPE_DELETE) {
-            val delete = dbHelper.writableDatabase.delete(ClickColumns.TABLE_NAME, "${ClickColumns.TIMESTAMP} = ${uri.pathSegments[1]}", selectionArgs)
+            val delete = dbHelper.writableDatabase.delete(ClickColumns.TABLE_NAME, "${ClickColumns.ID} = ${uri.pathSegments[1]}", selectionArgs)
 
             context.contentResolver.notifyChange(uri, null)
             return delete
@@ -97,9 +92,7 @@ class ContentProvider : ContentProvider() {
 private class DbHelper(context: Context) : SQLiteOpenHelper(context, MetaData.DATABASE_NAME, null, MetaData.DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL("CREATE TABLE ${ClickColumns.TABLE_NAME} (" +
-                "${ClickColumns.ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "${ClickColumns.TIMESTAMP} INTEGER)")
+        db.execSQL("CREATE TABLE ${ClickColumns.TABLE_NAME} (${ClickColumns.ID} INTEGER PRIMARY KEY)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

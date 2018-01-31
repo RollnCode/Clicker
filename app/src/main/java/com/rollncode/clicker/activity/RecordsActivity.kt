@@ -9,11 +9,6 @@ import com.rollncode.clicker.adapter.RecordsAdapter
 import com.rollncode.clicker.content.MetaData.ClickColumns
 import kotlinx.android.synthetic.main.activity_list.*
 
-/**
- *
- * @author Osadchiy Artem osadchiyzp93@gmail.com
- * @since 2018.01.11
- */
 class RecordsActivity : BaseActivity() {
 
     private lateinit var adapter: RecordsAdapter
@@ -28,17 +23,13 @@ class RecordsActivity : BaseActivity() {
         loaderManager.initLoader(0, null, this)
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this, ClickColumns.CONTENT_URI_GROUPED,
-            arrayOf(ClickColumns.TIMESTAMP, "COUNT(*) as ${ClickColumns.ID}"), null, null, null)
+    override fun onCreateLoader(id: Int, args: Bundle?) = CursorLoader(this, ClickColumns.CONTENT_URI_DAY,
+            arrayOf(ClickColumns.ID, "COUNT(*) as ${ClickColumns.COUNT}"), null, null, null)
 
     override fun onLoadFinished(loader: Loader<Cursor>?, data: Cursor)
             = adapter.changeCursor(data)
 
-    override fun onLoaderReset(loader: Loader<Cursor>?) = Unit
-
     override fun isDisplayHomeAsUpEnabled() = true
 
-    override fun getShareData() = adapter.getActivatedList().run {
-        shareCursorQuery(*toTypedArray())
-    }
+    override fun getShareDates() = adapter.getActivatedDates()
 }

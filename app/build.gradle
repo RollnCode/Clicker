@@ -13,7 +13,7 @@ android {
         targetSdkVersion 27
 
         versionCode 1
-        versionName "1.0"
+        versionName "1"
 
         //TODO: this is not needed if there is no instrumental tests - implement tests or remove
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,7 +21,7 @@ android {
     buildTypes {
         debug {
 //            signingConfig signingConfigs.keystore
-            versionNameSuffix new Date().format(":MMdd-HH-")
+            versionNameSuffix ":debug"
 
             debuggable true
         }

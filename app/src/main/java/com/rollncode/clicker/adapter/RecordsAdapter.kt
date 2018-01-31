@@ -10,34 +10,34 @@ import android.widget.CursorAdapter
 import android.widget.TextView
 import com.rollncode.clicker.R
 import com.rollncode.clicker.content.MetaData.ClickColumns
-import com.rollncode.clicker.extension.convertToDateString
+import com.rollncode.clicker.content.toTimestamp
 
 class RecordsAdapter(context: Context) : CursorAdapter(context, null, false), OnClickListener {
 
-    private val activated = mutableMapOf<String, Boolean>()
+    private val activated = mutableMapOf<Long, Boolean>()
 
     override fun newView(context: Context, cursor: Cursor, parent: ViewGroup)
             = Holder(parent, cursor, this).view
 
     override fun bindView(view: View, context: Context, cursor: Cursor) = (view.tag as Holder).run {
         onBind(cursor)
-        view.isActivated = activated.get(date) == true
+        view.isActivated = activated[timestamp] == true
     }
 
     override fun onClick(v: View) {
         val holder = v.tag as Holder
-        val key = holder.date
+        val key = holder.timestamp
 
         if (v.isActivated)
-            activated.remove(key)
+            activated -= key
         else
-            activated.put(key, true)
+            activated[key] = true
 
         super.notifyDataSetChanged()
     }
 
-    fun getActivatedList()
-            = activated.keys.toList()
+    fun getActivatedDates()
+            = activated.keys.toTypedArray()
 }
 
 private class Holder(parent: ViewGroup, cursor: Cursor, clickListener: OnClickListener) {
@@ -47,19 +47,19 @@ private class Holder(parent: ViewGroup, cursor: Cursor, clickListener: OnClickLi
     val tvCount: TextView by lazy { view.findViewById<TextView>(R.id.tvCount) }
     val indexes: IntArray
 
-    var date: String = ""
+    var timestamp: Long = 0L
 
     init {
         view.tag = this
         view.setOnClickListener(clickListener)
 
-        indexes = intArrayOf(cursor.getColumnIndex(ClickColumns.TIMESTAMP), cursor.getColumnIndex(ClickColumns.ID))
+        indexes = intArrayOf(cursor.getColumnIndex(ClickColumns.ID), cursor.getColumnIndex(ClickColumns.COUNT))
     }
 
     fun onBind(cursor: Cursor) {
-        date = cursor.getLong(indexes[0]).convertToDateString()
+        timestamp = cursor.getLong(indexes[0])
 
-        tvDate.text = date
+        tvDate.text = timestamp.toTimestamp()
         tvCount.text = cursor.getString(indexes[1])
     }
 }

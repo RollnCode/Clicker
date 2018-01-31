@@ -2,16 +2,10 @@ package com.rollncode.clicker.content
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.provider.BaseColumns
+import android.provider.BaseColumns._COUNT
 import android.provider.BaseColumns._ID
 
-/**
- *
- * @author Osadchiy Artem osadchiyzp93@gmail.com
- * @since 2018.01.23
- */
 class MetaData {
-
     companion object {
         val AUTHORITY = "com.rollncode.clicker.content_provider"
         val CONTENT_URI: Uri = Uri.parse("content://$AUTHORITY")
@@ -21,18 +15,21 @@ class MetaData {
     }
 
     class ClickColumns {
-        companion object : BaseColumns {
+        companion object {
             val TABLE_NAME = "click"
-
-            val CONTENT_URI: Uri = Uri.withAppendedPath(MetaData.CONTENT_URI, "click")
-            val CONTENT_URI_GROUPED: Uri = Uri.withAppendedPath(CONTENT_URI, "groupByDate")
 
             val CONTENT_DIR = "${ContentResolver.CURSOR_DIR_BASE_TYPE}/vnd.$AUTHORITY"
             val CONTENT_ITEM = "${ContentResolver.CURSOR_ITEM_BASE_TYPE}/vnd.$AUTHORITY"
 
             val ID = _ID
-            val TIMESTAMP = "timestamp"
-            val SORT_ORDER_DEFAULT = "$TIMESTAMP DESC"
+            val COUNT = _COUNT
+
+            val GROUP_DAY = "byDay"
+            val SORT_ORDER = "$ID DESC"
+            val QUERY_TIMESTAMP = "date($ID / 1000,'unixepoch')"
+
+            val CONTENT_URI: Uri = Uri.withAppendedPath(MetaData.CONTENT_URI, TABLE_NAME)
+            val CONTENT_URI_DAY: Uri = Uri.withAppendedPath(CONTENT_URI, GROUP_DAY)
         }
     }
 }
