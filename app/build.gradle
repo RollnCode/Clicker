@@ -10,16 +10,20 @@ android {
         applicationId "com.rollncode.clicker"
 
         targetSdkVersion 27
-
-        versionCode 1
         versionName "1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     flavorDimensions "main"
     productFlavors {
-        common { minSdkVersion 14 }
-        watches { minSdkVersion 23 }
+        common {
+            minSdkVersion 14
+            versionCode 1
+        }
+        watches {
+            minSdkVersion 23
+            versionCode 2
+        }
     }
     signingConfigs {
         keystore {
