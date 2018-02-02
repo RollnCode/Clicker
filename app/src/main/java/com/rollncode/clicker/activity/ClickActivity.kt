@@ -1,12 +1,16 @@
 package com.rollncode.clicker.activity
 
+import android.content.BroadcastReceiver
 import android.content.ContentValues
+import android.content.Context
 import android.content.CursorLoader
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.Loader
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import android.view.View.OnClickListener
@@ -53,6 +57,8 @@ class ClickActivity : BaseActivity(), OnClickListener {
         btnUndo.setOnClickListener(this)
 
         loaderManager.initLoader(0, null, this)
+
+        super.registerReceiver(volumeReceiver, IntentFilter("android.media.VOLUME_CHANGED_ACTION"))
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -63,6 +69,11 @@ class ClickActivity : BaseActivity(), OnClickListener {
             supportActionBar?.title = title
         else
             tvDate!!.text = title
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        super.unregisterReceiver(volumeReceiver)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_list) {
@@ -87,18 +98,47 @@ class ClickActivity : BaseActivity(), OnClickListener {
     }
 
     override fun onClick(view: View) = when (view.id) {
-        R.id.btnClick -> execute {
-            synchronized(contentValues) {
-                contentValues.clear()
-                contentValues.put(ClickColumns.ID, System.currentTimeMillis())
+        R.id.btnClick -> insertClick()
+        R.id.btnUndo  -> removeClick()
+        else          -> Unit
+    }
 
-                contentResolver.insert(ClickColumns.CONTENT_URI, contentValues)
+    private fun insertClick() = execute {
+        synchronized(contentValues) {
+            contentValues.clear()
+            contentValues.put(ClickColumns.ID, System.currentTimeMillis())
+
+            contentResolver.insert(ClickColumns.CONTENT_URI, contentValues)
+        }
+    }
+
+    private fun removeClick() = execute {
+        contentResolver.delete(Uri.withAppendedPath(ClickColumns.CONTENT_URI, lastTimestamp.toString()), null, null)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent) = when (keyCode) {
+        KeyEvent.KEYCODE_VOLUME_UP   -> {
+            insertClick()
+            true
+        }
+        KeyEvent.KEYCODE_VOLUME_DOWN -> {
+            removeClick()
+            true
+        }
+        else                         -> super.onKeyDown(keyCode, event)
+    }
+
+    private val volumeReceiver = object : BroadcastReceiver() {
+
+        var lastVolume = Int.MIN_VALUE
+
+        override fun onReceive(context: Context, intent: Intent) {
+            val volume = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_VALUE", Int.MIN_VALUE)
+            if (lastVolume != volume) {
+                lastVolume = volume
+                insertClick()
             }
         }
-        R.id.btnUndo  -> execute {
-            contentResolver.delete(Uri.withAppendedPath(ClickColumns.CONTENT_URI, lastTimestamp.toString()), null, null)
-        }
-        else          -> Unit
     }
 
     override fun getShareDates() = arrayOf(System.currentTimeMillis())
