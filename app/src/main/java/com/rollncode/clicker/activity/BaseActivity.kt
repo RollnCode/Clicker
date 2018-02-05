@@ -111,5 +111,4 @@ const val COMMON = BuildConfig.FLAVOR == "common"
 
 fun execute(block: () -> Unit) = executor.execute(block)
 
-fun Context.makeText(stringRes: Int)
-        = Toast.makeText(this, stringRes, Toast.LENGTH_LONG).show()
+fun Context.makeText(stringRes: Int) = Toast.makeText(this, stringRes, Toast.LENGTH_LONG).show()
