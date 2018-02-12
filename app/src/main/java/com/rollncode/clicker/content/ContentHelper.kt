@@ -32,15 +32,13 @@ fun Cursor.toJSONArray(): JSONArray = use {
             timestamp = this@toJSONArray.getLong(index)
             dayStartCurrent = calendar.getDayStartTime(timestamp)
 
-            if (dayStartCurrent == dayStartPrevious) {
-                localArray.put(timestamp.toTimestamp(true))
-
-            } else {
+            if (dayStartCurrent != dayStartPrevious) {
                 put(createJSONObject(dayStartPrevious, localArray))
 
                 localArray = JSONArray()
                 dayStartPrevious = dayStartCurrent
             }
+            localArray.put(timestamp.toTimestamp(true))
 
         } while (moveToNext())
 
